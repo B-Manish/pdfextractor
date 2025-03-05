@@ -15,7 +15,7 @@ class Program
         DotNetEnv.Env.Load();
         var textractClient = new AmazonTextractClient(Amazon.RegionEndpoint.USEast1);
         string bucketName = "ocr-nlp";
-        string key = "invoice3.pdf";
+        string key = "invoice1.pdf";
 
         var document = new Document
         {
