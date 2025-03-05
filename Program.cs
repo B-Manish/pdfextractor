@@ -44,7 +44,7 @@ class Program
 
             foreach (var kvp in keyValuePairs)
             {
-                csvContent.AppendLine($"{kvp.Key},{kvp.Value}");
+                csvContent.AppendLine($"{kvp.Key},{kvp.Value.Replace(",", "")}");
                 Console.WriteLine($"{kvp.Key}:{kvp.Value}");
             }
 
