@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Amazon.Textract;
@@ -13,7 +15,7 @@ class Program
         DotNetEnv.Env.Load();
         var textractClient = new AmazonTextractClient(Amazon.RegionEndpoint.USEast1);
         string bucketName = "ocr-nlp";
-        string key = "resume.pdf";
+        string key = "invoice3.pdf";
 
         var document = new Document
         {
@@ -36,16 +38,34 @@ class Program
 
             Dictionary<string, string> keyValuePairs = GetKeyValuePairs(analyzeResponse.Blocks);
 
+            // Create a StringBuilder to hold the CSV content
+            StringBuilder csvContent = new StringBuilder();
+
+            // Add header row to the CSV
+            csvContent.AppendLine("Key,Value");
+
+            // Iterate through the key-value pairs and add each one to the CSV content
             foreach (var kvp in keyValuePairs)
             {
-                // Console.WriteLine($"Key: {kvp.Key} Value: {kvp.Value}");
-                Console.WriteLine($"{kvp.Key} : {kvp.Value}");
-
+                csvContent.AppendLine($"{kvp.Key},{kvp.Value}");
+                Console.WriteLine($"{kvp.Key}:{kvp.Value}");
             }
+
+            // Define the path to save the CSV file in the current directory
+            string csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "output.csv");
+
+            // Write the CSV content to the file
+            File.WriteAllText(csvFilePath, csvContent.ToString());
+
+            Console.WriteLine($"CSV file created at: {csvFilePath}");
         }
         catch (Exception e)
         {
             Console.WriteLine($"Error: {e.Message}");
+            if (e.InnerException != null)
+            {
+                Console.WriteLine($"Inner Exception: {e.InnerException.Message}");
+            }
         }
     }
 
