@@ -38,23 +38,18 @@ class Program
 
             Dictionary<string, string> keyValuePairs = GetKeyValuePairs(analyzeResponse.Blocks);
 
-            // Create a StringBuilder to hold the CSV content
             StringBuilder csvContent = new StringBuilder();
 
-            // Add header row to the CSV
             csvContent.AppendLine("Key,Value");
 
-            // Iterate through the key-value pairs and add each one to the CSV content
             foreach (var kvp in keyValuePairs)
             {
                 csvContent.AppendLine($"{kvp.Key},{kvp.Value}");
                 Console.WriteLine($"{kvp.Key}:{kvp.Value}");
             }
 
-            // Define the path to save the CSV file in the current directory
             string csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "output.csv");
 
-            // Write the CSV content to the file
             File.WriteAllText(csvFilePath, csvContent.ToString());
 
             Console.WriteLine($"CSV file created at: {csvFilePath}");
