@@ -1,4 +1,4 @@
-﻿// using System;
+// using System;
 // using System.IO;
 // using System.Text;
 // using System.Collections.Generic;
@@ -193,7 +193,7 @@ namespace NanonetsInvoiceExtractor
             {
                 string key = prediction["label"].ToString();
                 string value = prediction["ocr_text"].ToString();
-                csvContent.AppendLine($"{key},{value}");
+                csvContent.AppendLine($"{key},{value.Replace(",", "")}");
             }
 
             // Write the CSV content to a file
