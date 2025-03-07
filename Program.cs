@@ -24,7 +24,7 @@ class Program
         string filePath=@"C:\Users\manish.batchu\Downloads\invoice1.pdf";
         var textractClient = new AmazonTextractClient(Amazon.RegionEndpoint.USEast1);
         string bucketName = "ocr-nlp";
-        string key = $"invoice_{Guid.NewGuid()}";
+        string key = $"invoice_{Guid.NewGuid()}"; // to generate a unique key when multiple users upload at the same time to avoid overwriting the file
         string region = Environment.GetEnvironmentVariable("AWS_DEFAULT_REGION");
 
 
@@ -144,6 +144,7 @@ class Program
         return text.Trim();
     }
 
+// helper function to generate Presigned url(used to upload the file to s3 bucket.)
     static string GeneratePreSignedURL(IAmazonS3 s3Client, string bucketName, string objectKey, TimeSpan expiryDuration)
     {
         var request = new GetPreSignedUrlRequest
@@ -158,7 +159,7 @@ class Program
         return s3Client.GetPreSignedURL(request);
     }
 
-
+// helper function to upload a file to s3 using presined url
     public static async Task UploadFileToS3(string presignedUrl, string filePath)
     {
         try
@@ -185,7 +186,7 @@ class Program
     }
 
 
-
+// helper function to delete file from s3
     static async Task DeleteFileFromS3Async(IAmazonS3 s3Client, string bucketName, string key)
     {
         try
