@@ -21,9 +21,10 @@ class Program
     static async Task Main(string[] args)
     {
         DotNetEnv.Env.Load();
+        string filePath=@"C:\Users\manish.batchu\Downloads\invoice1.pdf";
         var textractClient = new AmazonTextractClient(Amazon.RegionEndpoint.USEast1);
         string bucketName = "ocr-nlp";
-        string key = "invoice1.pdf";
+        string key = $"invoice_{Guid.NewGuid()}";
         string region = Environment.GetEnvironmentVariable("AWS_DEFAULT_REGION");
 
 
@@ -33,10 +34,8 @@ class Program
 
         string presignedUrl = GeneratePreSignedURL(s3Client, bucketName, key, TimeSpan.FromMinutes(15));
 
-        Console.WriteLine("presignedUrl " + presignedUrl);
-
         // uploads the file to s3 using a presigned url
-        await UploadFileToS3(presignedUrl, @"C:\Users\manish.batchu\Downloads\invoice1.pdf");
+        await UploadFileToS3(presignedUrl, filePath);
 
         var document = new Document
         {
@@ -66,7 +65,7 @@ class Program
             foreach (var kvp in keyValuePairs)
             {
                 csvContent.AppendLine($"{kvp.Key},{kvp.Value.Replace(",", "")}");
-                Console.WriteLine($"{kvp.Key}:{kvp.Value}");
+                // Console.WriteLine($"{kvp.Key}:{kvp.Value}");
             }
 
             string csvFilePath = Path.Combine(Directory.GetCurrentDirectory(), "output.csv");
@@ -74,6 +73,8 @@ class Program
             File.WriteAllText(csvFilePath, csvContent.ToString());
 
             Console.WriteLine($"CSV file created at: {csvFilePath}");
+            await DeleteFileFromS3Async(s3Client, bucketName, key);
+
         }
         catch (Exception e)
         {
@@ -185,6 +186,28 @@ class Program
 
 
 
+    static async Task DeleteFileFromS3Async(IAmazonS3 s3Client, string bucketName, string key)
+    {
+        try
+        {
+            var deleteObjectRequest = new DeleteObjectRequest
+            {
+                BucketName = bucketName,
+                Key = key
+            };
+
+            DeleteObjectResponse response = await s3Client.DeleteObjectAsync(deleteObjectRequest);
+            Console.WriteLine($"File with key '{key}' deleted successfully from bucket '{bucketName}'.");
+        }
+        catch (AmazonS3Exception ex)
+        {
+            Console.WriteLine($"Error encountered on server. Message: '{ex.Message}'");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unknown error encountered. Message: '{ex.Message}'");
+        }
+    }
 }
 
 
