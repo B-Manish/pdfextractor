@@ -27,7 +27,7 @@ class Program
         string region = Environment.GetEnvironmentVariable("AWS_DEFAULT_REGION");
 
 
-        var s3Client = new AmazonS3Client(RegionEndpoint.GetBySystemName("us-east-1"));
+        var s3Client = new AmazonS3Client(RegionEndpoint.GetBySystemName(region));
 
 
 
