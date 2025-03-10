@@ -21,10 +21,10 @@ class Program
     static async Task Main(string[] args)
     {
         DotNetEnv.Env.Load();
-        string filePath=@"C:\Users\manish.batchu\Downloads\invoice1.pdf";
+        string filePath=@"C:\Users\johndoe\Downloads\sample.pdf";
         var textractClient = new AmazonTextractClient(Amazon.RegionEndpoint.USEast1);
-        string bucketName = "ocr-nlp";
-        string key = $"invoice_{Guid.NewGuid()}"; // to generate a unique key when multiple users upload at the same time to avoid overwriting the file
+        string bucketName = Environment.GetEnvironmentVariable("AWS_BUCKET_NAME");
+        string key = $"pdf_{Guid.NewGuid()}"; // to generate a unique key when multiple users upload at the same time to avoid overwriting the file
         string region = Environment.GetEnvironmentVariable("AWS_DEFAULT_REGION");
 
 
